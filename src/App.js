@@ -1,37 +1,53 @@
-import { Component } from 'react'
 
-class App extends Component {
+import { useState, useEffect } from 'react'
+import './App.css'
+import Answer from './components/Answer'
+import Question from './components/Question'
+import Points from './components/Points'
 
-  constructor() {
-    super()
-    console.log('Hello from Contructor')
-    this.state = {
-      giffy: []
-    }
-  }
 
-  componentDidMount() {
-    console.log('Hello from Component did mount')
+export default function App() {
 
-    fetch('https://api.giphy.com/v1/gifs/trending?api_key=kcZXEZbYiUw8B0PNOUcO1FIayqcbA54q&limit=25&rating=g')
-      .then(response => response.json()) // parse the request
-      // .then(json => console.log(json));
-      .then(giffyData => this.setState({ giffy: giffyData.data })) // get the data
-  }
+  const [trivia, setTrivia] = useState([])
 
-  componentDidUpdate() {
-    console.log('Hello from component did update')
-  }
 
-  render() {
-    console.log('Hello from Render')
-    return (
-      <div>
-        <h1>Lifecycle Methods</h1>
-        {this.state.giffy.map(data => <img src={data.images.original.url}/>)}
-      </div>
-    )
-  }
+  useEffect(() => {
+    fetch('http://jservice.io/api/random')
+      .then(res => res.json())
+      .then(json => {
+        setTrivia(json[0])
+      }
+      )
+  }, [])
+
+
+  // const fetchBlogs = () => {
+  //   fetch('http://jservice.io/api/random')
+  //     .then(res => res.json())
+  //     .then(json => {
+  //       setTrivia(json[0])
+  //     }
+  //     )
+     
+  // };
+
+  return (
+    <div className='App'>
+      <form className="gameBoard">
+        <header className='jeopardy-game'>Jeopardy Game</header>
+        <Points
+          value={trivia.value}
+          score={0}
+        />
+        <Question
+          key={trivia.id}
+          question={trivia.question}
+        />
+        <Answer
+          answer={trivia.answer}
+
+        />
+      </form>
+    </div >
+  )
 }
-
-export default App
